@@ -48,6 +48,7 @@ function getTime(date) {
  * '03 Dec 1995 00:12:00 UTC' => 'Sunday'
  * '2024-01-30T00:00:00.000Z' => 'Tuesday'
  */
+
 function getNumberDay(date) {
   return new Date(date).getUTCDay();
 }
@@ -165,8 +166,26 @@ function formatDate(date) {
  * 12, 2023 => 10
  * 1, 2024 => 8
  */
-function getCountWeekendsInMonth(/* month, year */) {
-  throw new Error('Not implemented');
+function getNextDay(date, day) {
+  const numberDay = getNumberDay(date);
+  if (numberDay === day) return 1;
+  if (day === 0) return 8 - numberDay;
+  const countDay = numberDay < day ? day - numberDay : 12 - numberDay;
+  return countDay + 1;
+}
+
+function getCountWeekendsInMonth(month, year) {
+  const countDayMonth = getCountDaysInMonth(month, year);
+  const date = new Date(year, month, 2 - countDayMonth);
+  let countWeekend = 0;
+  [6, 0].forEach((item) => {
+    let currentDate = getNextDay(date, item);
+    while (currentDate <= countDayMonth) {
+      currentDate += 7;
+      countWeekend += 1;
+    }
+  });
+  return countWeekend;
 }
 
 /**
