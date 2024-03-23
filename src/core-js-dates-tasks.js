@@ -96,7 +96,7 @@ function getNextFriday(date) {
  * 2, 2024 => 29
  */
 function getCountDaysInMonth(month, year) {
-  return new Date(year, month, 1).getUTCDate();
+  return new Date(year, month, 0).getUTCDate();
 }
 
 /**
@@ -176,7 +176,7 @@ function getNextDay(date, day) {
 
 function getCountWeekendsInMonth(month, year) {
   const countDayMonth = getCountDaysInMonth(month, year);
-  const date = new Date(year, month, 2 - countDayMonth);
+  const date = new Date(year, month, 1 - countDayMonth);
   let countWeekend = 0;
   [6, 0].forEach((item) => {
     let currentDate = getNextDay(date, item);
@@ -201,8 +201,19 @@ function getCountWeekendsInMonth(month, year) {
  * Date(2024, 0, 31) => 5
  * Date(2024, 1, 23) => 8
  */
-function getWeekNumberByDate(/* date */) {
-  throw new Error('Not implemented');
+function getWeekNumberByDate(date) {
+  const currentDate = new Date(date);
+  const dateBeginYear = new Date(currentDate.getUTCFullYear(), 0, 1);
+  const countDay = getCountDaysOnPeriod(dateBeginYear, currentDate);
+  let numberWeek = Math.ceil(countDay / 7);
+  const numberCurrentDay = getNumberDay(currentDate);
+  const numberBeginYear = getNumberDay(dateBeginYear);
+  if (
+    numberBeginYear === 0 ||
+    (numberCurrentDay !== 0 && numberCurrentDay < numberBeginYear)
+  )
+    numberWeek += 1;
+  return numberWeek;
 }
 
 /**
